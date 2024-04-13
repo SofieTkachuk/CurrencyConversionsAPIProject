@@ -1,7 +1,13 @@
 import io.restassured.response.Response;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.*;
@@ -16,7 +22,6 @@ public class APIendpointsFunctionalityTests {
     // success - Returns true or false depending on whether or not your query succeeds.
     // terms - Returns a link to the currency layer Terms & Conditions.
     // privacy - Returns a link to the currency layer Privacy Policy.
-    // timestamp - Returns the exact date and time (UNIX) the exchange rates were collected.
     // source - Returns the currency to which all exchange rates are relative. (default: USD)
     // quotes - It contains all exchange rate values, consisting of the currency pairs and their respective conversion rates.
 
@@ -34,6 +39,26 @@ public class APIendpointsFunctionalityTests {
                 .body("source", equalTo("USD"))
                 .body("quotes", notNullValue());
     }
+
+    // timestamp - Returns the exact date and time (UNIX) the exchange rates were collected.
+
+    @Test
+    public void timeStampTest(){
+        response = given().get(Consts.URL+Consts.LIVE_ENDPOINT+"?"+Consts.API_ACCESS_KEY);
+        System.out.println(response.asString());
+
+        String expected = LocalDate.now().toString();
+        //get timestamp from response
+        Integer actualMs = response.path("timestamp");
+        //create format to match expected String date
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+        //get Date from the timestamp in request - a hard part, we need to set it to long and multiply by 1000
+        //as in this case API returns UNIX time and not epoch time
+        Date date2 = new Date((long)actualMs*1000);
+        //format date from response to match expected String date
+        String actual = format.format(date2.getTime());
+
+        Assertions.assertEquals(expected, actual);}
 
     // Please note that our customer will use  only some of the currencies (USDCAD, USDEUR, USDNIS, and USDRUB)
 
