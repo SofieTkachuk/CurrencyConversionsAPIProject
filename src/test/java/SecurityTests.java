@@ -11,15 +11,15 @@ public class SecurityTests {
     // Expected error: You have not supplied a valid API Access Key.
 
     private static Response response;
-    private static final String ERROR_MESSAGE = "You have not supplied a valid API Access Key.";
+    private static final String ERROR_MESSAGE_NO_KEY = "No API key found in request";
+    private static final String ERROR_MESSAGE_INVALID_KEY = "Invalid authentication credentials";
 
     @Test
     public void getErrorMessageNoAccessKeyTestLiveEndpoint(){
         response = given().get(Consts.URL+Consts.LIVE_ENDPOINT);
         System.out.println(response.asString());
 
-        response.then().body("message", equalTo (ERROR_MESSAGE));
-        response.then().statusCode(101);
+        response.then().body("message", equalTo (ERROR_MESSAGE_NO_KEY));
     }
 
     @Test
@@ -27,8 +27,7 @@ public class SecurityTests {
         response = given().get(Consts.URL+Consts.LIVE_ENDPOINT+"?"+Consts.INVALID_API_ACCESS_KEY);
         System.out.println(response.asString());
 
-        response.then().body("message", equalTo (ERROR_MESSAGE));
-        response.then().statusCode(101);
+        response.then().body("message", equalTo (ERROR_MESSAGE_INVALID_KEY));
     }
 
     @Test
@@ -36,8 +35,7 @@ public class SecurityTests {
         response = given().get(Consts.URL+Consts.HISTORICAL_ENDPOINT);
         System.out.println(response.asString());
 
-        response.then().body("message", equalTo (ERROR_MESSAGE));
-        response.then().statusCode(101);
+        response.then().body("message", equalTo (ERROR_MESSAGE_NO_KEY));
     }
 
     @Test
@@ -45,7 +43,6 @@ public class SecurityTests {
         response = given().get(Consts.URL+Consts.HISTORICAL_ENDPOINT+"?"+Consts.DATE_PARAMETER+"2024-01-02&"+Consts.INVALID_API_ACCESS_KEY);
         System.out.println(response.asString());
 
-        response.then().body("message", equalTo (ERROR_MESSAGE));
-        response.then().statusCode(101);
+        response.then().body("message", equalTo (ERROR_MESSAGE_INVALID_KEY));
     }
 }

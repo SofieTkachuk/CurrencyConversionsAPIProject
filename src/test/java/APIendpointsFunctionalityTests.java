@@ -89,7 +89,7 @@ public class APIendpointsFunctionalityTests {
         response = given().get(Consts.URL + Consts.LIVE_ENDPOINT + "?" + Consts.API_ACCESS_KEY + "&" + Consts.SOURCE_PARAMETER + "USD&" + Consts.CURRENCIES_PARAMETER + "LAA");
         System.out.println(response.asString());
 
-        response.then().statusCode(202); // code 200 works here, bug
+        response.then().body("error.code", equalTo(202));
     }
 
     // Historical conversion according to date
@@ -107,10 +107,10 @@ public class APIendpointsFunctionalityTests {
 
     @Test
     public void historicalConversionWithoutDateTest() {
-        response = given().get(Consts.URL + Consts.HISTORICAL_ENDPOINT+Consts.API_ACCESS_KEY);
+        response = given().get(Consts.URL+Consts.HISTORICAL_ENDPOINT+"?"+Consts.DATE_PARAMETER+"&"+Consts.API_ACCESS_KEY);
         System.out.println(response.asString());
 
-        response.then().statusCode(301); //401 code instead
+        response.then().body("error.code", equalTo(301));
     }
 
     @Test
@@ -118,7 +118,7 @@ public class APIendpointsFunctionalityTests {
         response = given().get(Consts.URL + Consts.HISTORICAL_ENDPOINT + "?" + Consts.DATE_PARAMETER+"invalid-date&"+Consts.API_ACCESS_KEY);
         System.out.println(response.asString());
 
-        response.then().statusCode(302); //200 code instead, bug
+        response.then().body("error.code", equalTo(302));
     }
 
     // Endpoint is able to receive currencies parameters.
